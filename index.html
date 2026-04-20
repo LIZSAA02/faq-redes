@@ -1,0 +1,530 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netflix | Centro de Ayuda</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* ── RESET & BASE ── */
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+
+        :root {
+            --red: #E50914;
+            --red-hover: #F40612;
+            --dark: #0A0A0A;
+            --card: #181818;
+            --card2: #222;
+            --border: rgba(255,255,255,0.07);
+            --text: #E5E5E5;
+            --muted: #999;
+            --white: #fff;
+            --radius: 10px;
+            --transition: .22s cubic-bezier(.4,0,.2,1);
+        }
+
+        body {
+            background: var(--dark);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 15px;
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        /* ── GRAIN OVERLAY ── */
+        body::after {
+            content:'';
+            position:fixed; inset:0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events:none; z-index:9999; opacity:.4;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            position: sticky; top:0; z-index:100;
+            background: rgba(10,10,10,0.92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 5vw;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 64px;
+        }
+
+        .nav-logo {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 32px;
+            color: var(--red);
+            letter-spacing: 1px;
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        .nav-right {
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .nav-tag {
+            font-size: 11px;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            border: 1px solid var(--border);
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative;
+            padding: 90px 5vw 70px;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero::before {
+            content:'';
+            position:absolute; inset:0;
+            background:
+                radial-gradient(ellipse 60% 80% at 100% 50%, rgba(229,9,20,0.12) 0%, transparent 65%),
+                radial-gradient(ellipse 50% 60% at 0% 100%, rgba(229,9,20,0.06) 0%, transparent 60%);
+            pointer-events:none;
+        }
+
+        .hero-inner {
+            position:relative; z-index:1;
+            max-width: 780px;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex; align-items: center; gap: 8px;
+            font-size: 11px; letter-spacing:.14em; text-transform:uppercase;
+            color: var(--red); font-weight:600;
+            margin-bottom: 20px;
+        }
+
+        .hero-eyebrow::before {
+            content:''; width:24px; height:2px; background:var(--red);
+        }
+
+        h1 {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: clamp(52px, 8vw, 88px);
+            line-height: .95;
+            letter-spacing: 1px;
+            color: var(--white);
+            margin-bottom: 22px;
+        }
+
+        h1 .red { color: var(--red); }
+
+        .hero-desc {
+            font-size: 16px;
+            font-weight: 300;
+            color: var(--muted);
+            max-width: 500px;
+            margin-bottom: 36px;
+        }
+
+        /* Search bar */
+        .search-wrap {
+            display: flex;
+            align-items: center;
+            max-width: 520px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: border-color var(--transition);
+        }
+
+        .search-wrap:focus-within {
+            border-color: rgba(229,9,20,0.5);
+            box-shadow: 0 0 0 3px rgba(229,9,20,0.08);
+        }
+
+        .search-wrap input {
+            flex:1; border:none; outline:none;
+            background:transparent;
+            padding: 14px 18px;
+            font-family:'Outfit',sans-serif;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .search-wrap input::placeholder { color: var(--muted); }
+
+        .search-btn {
+            padding: 14px 22px;
+            background: var(--red);
+            border:none; cursor:pointer;
+            font-family:'Outfit',sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #fff;
+            transition: background var(--transition);
+        }
+
+        /* Channel pills */
+        .channels {
+            display:flex; gap:8px; flex-wrap:wrap;
+            margin-top: 32px;
+        }
+
+        .channel {
+            display:flex; align-items:center; gap:7px;
+            padding: 7px 14px;
+            border-radius: 6px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .channel .dot {
+            width:7px; height:7px; border-radius:50%;
+            background: var(--red);
+        }
+
+        /* ── SECTION TABS ── */
+        .tabs-wrap {
+            position: sticky; top:64px; z-index:90;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 5vw;
+            display:flex;
+            overflow-x:auto;
+            scrollbar-width:none;
+        }
+
+        .tab-btn {
+            position:relative;
+            padding: 18px 22px;
+            background:none; border:none; cursor:pointer;
+            font-family:'Outfit',sans-serif;
+            font-size: 13px;
+            font-weight:500;
+            color: var(--muted);
+            white-space:nowrap;
+            transition: color var(--transition);
+        }
+
+        .tab-btn::after {
+            content:''; position:absolute; bottom:0; left:22px; right:22px;
+            height:2px; background:var(--red);
+            transform:scaleX(0); transition: transform var(--transition);
+        }
+
+        .tab-btn.active { color: var(--white); }
+        .tab-btn.active::after { transform:scaleX(1); }
+
+        /* ── MAIN CONTENT ── */
+        main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 5vw 80px;
+        }
+
+        .section {
+            display:none;
+            animation: fadeIn .35s ease both;
+        }
+
+        .section.active { display:block; }
+
+        @keyframes fadeIn {
+            from { opacity:0; transform:translateY(12px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        .section-header {
+            padding: 56px 0 32px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 32px;
+            display:flex; align-items:flex-end; justify-content:space-between;
+        }
+
+        .section-title {
+            font-family:'Bebas Neue',sans-serif;
+            font-size: clamp(30px, 5vw, 44px);
+            color:var(--white);
+        }
+
+        /* ── FAQ ACCORDION ── */
+        .faq-list { display:flex; flex-direction:column; gap:10px; }
+
+        .faq-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow:hidden;
+            transition: border-color var(--transition);
+        }
+
+        .faq-trigger {
+            width:100%; background:none; border:none; cursor:pointer;
+            display:flex; align-items:center; gap:16px;
+            padding: 20px 22px; text-align:left;
+        }
+
+        .faq-q-text { flex:1; font-weight:500; color:var(--text); }
+
+        .faq-body {
+            max-height:0; overflow:hidden;
+            transition: max-height .35s ease;
+        }
+
+        .faq-item.open .faq-body { max-height: 400px; }
+
+        .faq-body-inner {
+            padding: 0 22px 22px;
+            display:flex; gap:14px;
+        }
+
+        .faq-a-badge {
+            width:32px; height:32px; background: rgba(255,255,255,0.04);
+            border-radius:7px; display:flex; align-items:center; justify-content:center;
+            color: var(--red); font-weight:700; flex-shrink:0;
+        }
+
+        .faq-answer { font-size:14px; color:var(--muted); }
+
+        /* ── FOOTER ── */
+        footer {
+            padding: 40px 5vw; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* ── SEARCH HIGHLIGHT ── */
+        .hidden { display: none !important; }
+
+        @media (max-width: 600px) {
+            .section-header { flex-direction: column; align-items: flex-start; }
+            .tabs-wrap { top: 64px; }
+            footer { flex-direction: column; gap: 20px; text-align: center; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="nav-logo" href="#">NETFLIX</a>
+    <div class="nav-right">
+        <span class="nav-tag">Centro de Ayuda</span>
+    </div>
+</nav>
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-eyebrow">Atención al Cliente · Preguntas Frecuentes</div>
+        <h1>¿En qué podemos<br><span class="red">ayudarte?</span></h1>
+        <p class="hero-desc">Busca respuestas oficiales sobre tu suscripción, problemas de red o gestión de perfiles.</p>
+        <div class="search-wrap">
+            <input type="text" placeholder="Busca palabras clave (ej: plan, error, contraseña)..." id="searchInput" onkeyup="handleSearch()">
+            <button class="search-btn">Buscar</button>
+        </div>
+        <div class="channels">
+            <div class="channel"><span class="dot"></span>Instagram</div>
+            <div class="channel"><span class="dot"></span>WhatsApp</div>
+            <div class="channel"><span class="dot"></span>Facebook</div>
+        </div>
+    </div>
+</section>
+
+<div class="tabs-wrap">
+    <button class="tab-btn active" onclick="showSection('planes', this)">💳 Planes</button>
+    <button class="tab-btn" onclick="showSection('tecnico', this)">🛠 Técnico</button>
+    <button class="tab-btn" onclick="showSection('contenido', this)">🎬 Cuenta</button>
+    <button class="tab-btn" onclick="showSection('pagos', this)">💰 Pagos</button>
+</div>
+
+<main>
+    <!-- SECCIÓN PLANES -->
+    <div class="section active" id="sec-planes">
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Planes & Suscripción</h2>
+                <p>Información sobre membresías y cambios de plan.</p>
+            </div>
+            <span class="nav-tag">3 Artículos</span>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Qué planes ofrece Netflix?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Netflix ofrece diversos planes para que elijas el más adecuado. El plan que elijas determinará el número de dispositivos en los que puedes ver contenido al mismo tiempo y la calidad de video.</p></div></div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Cómo puedo cambiar mi plan?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Inicia sesión en tu cuenta de Netflix, ve a 'Información del plan' y selecciona 'Cambiar de plan'. Los cambios a un plan superior se aplican de inmediato.</p></div></div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Cómo cancelo mi suscripción?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Puedes cancelar tu suscripción en cualquier momento desde la sección 'Cuenta'. Haz clic en el botón 'Cancelar membresía' y sigue las instrucciones.</p></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN TÉCNICO -->
+    <div class="section" id="sec-tecnico">
+        <div class="section-header">
+            <h2 class="section-title">Problemas Técnicos</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Por qué no puedo ver Netflix en HD?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">La calidad HD depende de tu plan de suscripción, tu conexión a internet y las capacidades del dispositivo que estés utilizando.</p></div></div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">Solución de errores de conexión (NW-2-5)</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Este error indica un problema de conectividad de red. Verifica tu señal Wi-Fi, reinicia tu módem o contacta a tu proveedor de internet.</p></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN CUENTA -->
+    <div class="section" id="sec-contenido">
+        <div class="section-header">
+            <h2 class="section-title">Cuenta & Perfiles</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Cómo recupero mi contraseña?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Ve a netflix.com/loginhelp. Puedes restablecerla mediante correo electrónico o mensaje de texto (SMS).</p></div></div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Cómo agrego un nuevo perfil?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">En la pantalla de selección de perfiles, elige 'Agregar perfil'. Puedes tener hasta cinco perfiles en una sola cuenta.</p></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECCIÓN PAGOS -->
+    <div class="section" id="sec-pagos">
+        <div class="section-header">
+            <h2 class="section-title">Pagos & Facturación</h2>
+        </div>
+        <div class="faq-list">
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Cuándo se me cobrará la suscripción?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Se te cobrará automáticamente cada mes en la fecha en que te suscribiste originalmente.</p></div></div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <button class="faq-trigger">
+                    <span class="faq-q-text">¿Qué métodos de pago son aceptados?</span>
+                    <span>▾</span>
+                </button>
+                <div class="faq-body"><div class="faq-body-inner"><div class="faq-a-badge">R</div><p class="faq-answer">Aceptamos tarjetas de crédito y débito, tarjetas de regalo de Netflix y, en algunos países, pagos a través de terceros o socios de telefonía.</p></div></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-logo">NETFLIX</div>
+    <div style="font-size: 12px; color: var(--muted);">© 2024 Centro de Ayuda para Usuarios Digitales.</div>
+</footer>
+
+<script>
+    function toggleFAQ(element) {
+        element.classList.toggle('open');
+    }
+
+    function showSection(id, btn) {
+        // Tab transition
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        // Section transition
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.getElementById('sec-' + id).classList.add('active');
+        
+        // Reset search if changing sections
+        document.getElementById('searchInput').value = '';
+        handleSearch();
+    }
+
+    function handleSearch() {
+        const query = document.getElementById('searchInput').value.toLowerCase();
+        const items = document.querySelectorAll('.faq-item');
+        const sections = document.querySelectorAll('.section');
+        
+        if (query === '') {
+            items.forEach(item => item.classList.remove('hidden'));
+            return;
+        }
+
+        let foundInSection = new Set();
+
+        items.forEach(item => {
+            const text = item.innerText.toLowerCase();
+            if (text.includes(query)) {
+                item.classList.remove('hidden');
+                foundInSection.add(item.closest('.section').id);
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+
+        // Activar automáticamente la primera sección que contenga resultados
+        if (foundInSection.size > 0) {
+            const firstFoundId = Array.from(foundInSection)[0];
+            const sectionId = firstFoundId.replace('sec-', '');
+            const targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.innerText.toLowerCase().includes(sectionId.substring(0,3)));
+            
+            // Solo activamos visualmente si no hay secciones activas con resultados
+            const activeSection = document.querySelector('.section.active');
+            if (!foundInSection.has(activeSection.id)) {
+                sections.forEach(s => s.classList.remove('active'));
+                document.getElementById(firstFoundId).classList.add('active');
+                
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                if (targetBtn) targetBtn.classList.add('active');
+            }
+        }
+    }
+
+    // Scroll reveal simple
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = "1";
+                entry.target.style.transform = "translateY(0)";
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.faq-item').forEach(el => {
+        el.style.opacity = "0";
+        el.style.transform = "translateY(15px)";
+        el.style.transition = "all 0.5s ease-out";
+        observer.observe(el);
+    });
+</script>
+
+</body>
+</html>
